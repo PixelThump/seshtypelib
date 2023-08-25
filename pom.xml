@@ -142,7 +142,7 @@
                 </configuration>
             </plugin>
         </plugins>
-        <finalName>seshtype</finalName>
+        <finalName>seshtypelib</finalName>
     </build>
     <distributionManagement>
         <repository>
