@@ -1,4 +1,4 @@
-package com.roboter5123.backendtemplate;
+package com.pixelthump.seshtype.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
