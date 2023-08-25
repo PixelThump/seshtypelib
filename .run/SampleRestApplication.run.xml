@@ -9,7 +9,7 @@
       <env name="database_password" value="" />
     </envs>
     <module name="seshtypelib" />
-    <option name="SPRING_BOOT_MAIN_CLASS" value="com.pixelthump.seshtype.Application" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.pixelthump.seshtypelib.Application" />
     <option name="VM_PARAMETERS" value="-Djasypt.encryptor.password=derfisch5123" />
     <method v="2">
       <option name="Make" enabled="true" />
