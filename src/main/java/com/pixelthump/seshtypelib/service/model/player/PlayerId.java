@@ -1,4 +1,4 @@
-package com.pixelthump.seshtypelib.repository.model.player;
+package com.pixelthump.seshtypelib.service.model.player;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
 import lombok.Setter;

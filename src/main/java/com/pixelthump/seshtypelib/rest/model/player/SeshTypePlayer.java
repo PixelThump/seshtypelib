@@ -12,13 +12,4 @@ public class SeshTypePlayer {
     private String playerName;
     private Boolean vip;
     private Long points;
-    private SeshTypePlayerIconName playerIconName;
-
-    public SeshTypePlayer(SeshTypePlayerId playerId, boolean vip, long points, SeshTypePlayerIconName playerIconName) {
-
-        this.playerId = playerId;
-        this.vip = vip;
-        this.points = points;
-        this.playerIconName = playerIconName;
-    }
 }

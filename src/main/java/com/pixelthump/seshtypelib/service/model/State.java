@@ -1,5 +1,5 @@
-package com.pixelthump.seshtypelib.repository.model;
-import com.pixelthump.seshtypelib.repository.model.player.Player;
+package com.pixelthump.seshtypelib.service.model;
+import com.pixelthump.seshtypelib.service.model.player.Player;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

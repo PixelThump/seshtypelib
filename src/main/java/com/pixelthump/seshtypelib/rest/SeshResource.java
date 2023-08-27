@@ -1,17 +1,16 @@
 package com.pixelthump.seshtypelib.rest;
 import com.pixelthump.seshtypelib.repository.model.command.Command;
-import com.pixelthump.seshtypelib.repository.model.player.Player;
 import com.pixelthump.seshtypelib.rest.model.command.SeshTypeCommand;
 import com.pixelthump.seshtypelib.rest.model.player.SeshTypePlayer;
 import com.pixelthump.seshtypelib.rest.model.seshinfo.SeshTypeSeshInfo;
 import com.pixelthump.seshtypelib.service.SeshService;
 import com.pixelthump.seshtypelib.service.model.SeshInfo;
-import com.pixelthump.seshtypelib.service.model.AbstractServiceState;
+import com.pixelthump.seshtypelib.service.model.messaging.AbstractServiceState;
+import com.pixelthump.seshtypelib.service.model.player.Player;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
 @RequestMapping("/seshs")
 @Log4j2
 public class SeshResource {

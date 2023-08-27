@@ -6,14 +6,4 @@ public class SeshInfo {
 
     private String seshType;
     private String seshCode;
-
-    public SeshInfo() {
-
-    }
-
-    public SeshInfo(String seshType, String seshCode) {
-
-        this.seshType = seshType;
-        this.seshCode = seshCode;
-    }
 }

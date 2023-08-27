@@ -1,5 +1,5 @@
-package com.pixelthump.seshtypelib.repository.model.player;
-import com.pixelthump.seshtypelib.repository.model.State;
+package com.pixelthump.seshtypelib.service.model.player;
+import com.pixelthump.seshtypelib.service.model.State;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +9,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Entity
-
 public class Player implements Serializable {
 
     @EmbeddedId

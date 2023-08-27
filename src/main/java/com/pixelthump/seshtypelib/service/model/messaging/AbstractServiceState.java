@@ -1,4 +1,4 @@
-package com.pixelthump.seshtypelib.service.model;
+package com.pixelthump.seshtypelib.service.model.messaging;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

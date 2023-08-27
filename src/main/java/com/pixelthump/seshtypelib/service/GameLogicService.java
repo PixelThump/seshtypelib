@@ -1,7 +1,7 @@
 package com.pixelthump.seshtypelib.service;
 import com.pixelthump.seshtypelib.service.model.State;
 
-public interface BroadcastService {
+public interface GameLogicService {
 
-    State broadcastSeshUpdate(State state);
+    State processQueue(State state);
 }

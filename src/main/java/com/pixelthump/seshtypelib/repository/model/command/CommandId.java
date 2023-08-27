@@ -1,5 +1,5 @@
 package com.pixelthump.seshtypelib.repository.model.command;
-import com.pixelthump.seshtypelib.repository.model.State;
+import com.pixelthump.seshtypelib.service.model.State;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;

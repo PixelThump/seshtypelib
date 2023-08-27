@@ -1,36 +1,42 @@
 package com.pixelthump.seshtypelib.service;
 import com.pixelthump.seshtypelib.repository.CommandRespository;
-import com.pixelthump.seshtypelib.repository.PlayerRepository;
-import com.pixelthump.seshtypelib.repository.StateRepository;
-import com.pixelthump.seshtypelib.repository.model.State;
 import com.pixelthump.seshtypelib.repository.model.command.Command;
 import com.pixelthump.seshtypelib.repository.model.command.CommandId;
-import com.pixelthump.seshtypelib.repository.model.player.Player;
 import com.pixelthump.seshtypelib.service.model.SeshInfo;
-import com.pixelthump.seshtypelib.service.model.AbstractServiceState;
+import com.pixelthump.seshtypelib.service.model.State;
+import com.pixelthump.seshtypelib.service.model.messaging.AbstractServiceState;
+import com.pixelthump.seshtypelib.service.model.player.Player;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 
 @Component
+@Log4j2
 public class SeshServiceImpl implements SeshService {
 
     private final StateFactory stateFactory;
-    private final StateRepository stateRepository;
+    private final StateService stateService;
     private final CommandRespository commandRespository;
-    private final PlayerRepository playerRepository;
-    private final StateConverterService stateConverterService;
+    private final PlayerService playerService;
+    private final GameLogicService gameLogicService;
+    private final BroadcastService broadcastService;
 
-    public SeshServiceImpl(StateFactory stateFactory, StateRepository stateRepository, CommandRespository commandRespository, PlayerRepository playerRepository, StateConverterService stateConverterService) {
+    public SeshServiceImpl(StateFactory stateFactory, StateService stateService, CommandRespository commandRespository, PlayerService playerService, GameLogicService gameLogicService, BroadcastService broadcastService) {
 
         this.stateFactory = stateFactory;
-        this.stateRepository = stateRepository;
+        this.stateService = stateService;
         this.commandRespository = commandRespository;
-        this.playerRepository = playerRepository;
-        this.stateConverterService = stateConverterService;
+        this.playerService = playerService;
+        this.gameLogicService = gameLogicService;
+        this.broadcastService = broadcastService;
     }
 
     @Override
@@ -44,14 +50,14 @@ public class SeshServiceImpl implements SeshService {
     @Transactional
     public SeshInfo hostSesh(String seshCode) {
 
-        if (stateRepository.existsBySeshCode(seshCode)) {
+        if (stateService.existsBySeshCode(seshCode)) {
 
             String responseMessage = "Sesh with seshCode " + seshCode + " already exists";
             throw new ResponseStatusException(HttpStatus.CONFLICT, responseMessage);
         }
 
         State sesh = createSesh(seshCode);
-        stateRepository.save(sesh);
+        stateService.save(sesh);
 
         return extractSeshInfo(sesh);
     }
@@ -67,7 +73,7 @@ public class SeshServiceImpl implements SeshService {
 
     public State getSesh(String seshCode) {
 
-        Optional<State> state = stateRepository.findBySeshCodeAndActive(seshCode, true);
+        Optional<State> state = stateService.findBySeshCodeAndActive(seshCode, true);
 
         if (state.isEmpty()) {
 
@@ -83,7 +89,7 @@ public class SeshServiceImpl implements SeshService {
 
         State state = getSesh(seshCode);
         boolean seshIsFull = state.getPlayers().size() == state.getMaxPlayer();
-        boolean playerAlreadyJoined = playerRepository.existsByPlayerId_PlayerNameAndPlayerId_SeshCode(seshCode, player.getPlayerId().getPlayerName());
+        boolean playerAlreadyJoined = playerService.existsByPlayerNameAndSeshCode(seshCode, player.getPlayerId().getPlayerName());
         if ((seshIsFull || playerAlreadyJoined)) {
 
             throw new ResponseStatusException(HttpStatus.CONFLICT);
@@ -92,11 +98,11 @@ public class SeshServiceImpl implements SeshService {
         player.setState(state);
         player.setVip(false);
         player.setPoints(0L);
-        playerRepository.save(player);
+        player = playerService.save(player);
         state.getPlayers().add(player);
         state.setHasChanged(true);
-        stateRepository.save(state);
-        return this.stateConverterService.getControllerState(player, state);
+        stateService.save(state);
+        return this.stateService.getControllerState(player, state);
     }
 
     @Override
@@ -109,24 +115,36 @@ public class SeshServiceImpl implements SeshService {
         }
         state.setHostJoined(true);
         state.setHasChanged(true);
-        stateRepository.save(state);
-        return this.stateConverterService.getHostState(state);
+        stateService.save(state);
+        return this.stateService.getHostState(state);
     }
 
     @Override
     public AbstractServiceState getStateForPlayer(String seshCode, String playerName) {
 
-        State state = stateRepository.findBySeshCode(seshCode);
+        State state = stateService.findBySeshCode(seshCode);
 
         AbstractServiceState result;
         if (playerName.equals("host")) {
-            result = this.stateConverterService.getHostState(state);
+            result = this.stateService.getHostState(state);
         } else {
             Player player = state.getPlayers().stream().filter(player1 -> player1.getPlayerId().getPlayerName().equals(playerName)).findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
-            result = this.stateConverterService.getControllerState(player, state);
+            result = this.stateService.getControllerState(player, state);
         }
 
         return result;
+    }
+
+    @Scheduled(fixedDelayString = "${quizxel.tickrate}", initialDelayString = "${quizxel.tickrate}")
+    public void processQueues() {
+
+        LocalDateTime startTime = LocalDateTime.now();
+        log.debug("starting processQueues at {}", startTime);
+        List<State> states = stateService.findByActive(true);
+        if (states.isEmpty()) return;
+        states.parallelStream().map(gameLogicService::processQueue).map(broadcastService::broadcastSeshUpdate).forEach(stateService::save);
+        LocalDateTime endTime = LocalDateTime.now();
+        log.debug("Finished processQueues at {} took {} ms", endTime, ChronoUnit.MILLIS.between(startTime, endTime));
     }
 
     private SeshInfo extractSeshInfo(State sesh) {

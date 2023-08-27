@@ -1,5 +1,5 @@
 package com.pixelthump.seshtypelib.service;
-import com.pixelthump.seshtypelib.repository.model.State;
+import com.pixelthump.seshtypelib.service.model.State;
 
 public interface StateFactory {
 
