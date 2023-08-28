@@ -73,7 +73,7 @@ public class SeshServiceImpl implements SeshService {
 
     public State getSesh(String seshCode) {
 
-        Optional<State> state = stateService.findBySeshCodeAndActive(seshCode, true);
+        Optional<? extends State> state = stateService.findBySeshCodeAndActive(seshCode, true);
 
         if (state.isEmpty()) {
 
@@ -140,7 +140,7 @@ public class SeshServiceImpl implements SeshService {
 
         LocalDateTime startTime = LocalDateTime.now();
         log.debug("starting processQueues at {}", startTime);
-        List<State> states = stateService.findByActive(true);
+        List<? extends State> states = stateService.findByActive(true);
         if (states.isEmpty()) return;
         states.parallelStream().map(gameLogicService::processQueue).map(broadcastService::broadcastSeshUpdate).forEach(stateService::save);
         LocalDateTime endTime = LocalDateTime.now();
