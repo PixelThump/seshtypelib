@@ -12,9 +12,9 @@ public interface StateService {
 
     boolean existsBySeshCode(String seshCode);
 
-    Optional<State> findBySeshCodeAndActive(String seshCode, Boolean active);
+    Optional<? extends State> findBySeshCodeAndActive(String seshCode, Boolean active);
 
-    List<State> findByActive(Boolean active);
+    List<? extends State> findByActive(Boolean active);
 
     State save(State state);
 
