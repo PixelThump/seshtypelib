@@ -10,6 +10,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @EqualsAndHashCode
+@Entity
 public class Player implements Serializable {
 
     @EmbeddedId
