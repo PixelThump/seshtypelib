@@ -142,9 +142,20 @@ public class SeshServiceImpl implements SeshService {
         log.debug("starting processQueues at {}", startTime);
         List<? extends State> states = stateService.findByActive(true);
         if (states.isEmpty()) return;
-        states.parallelStream().map(State::getSeshCode).map(gameLogicService::processQueue).forEach(broadcastService::broadcastSeshUpdate);
+        states.parallelStream()
+                .map(State::getSeshCode)
+                .map(gameLogicService::processQueue)
+                .filter(State::getHasChanged)
+                .forEach(this::broadcastSeshUpdate);
         LocalDateTime endTime = LocalDateTime.now();
         log.debug("Finished processQueues at {} took {} ms", endTime, ChronoUnit.MILLIS.between(startTime, endTime));
+    }
+
+    private State broadcastSeshUpdate(State state) {
+
+        broadcastService.broadcastSeshUpdate(state);
+        state.setHasChanged(false);
+        return stateService.save(state);
     }
 
     private SeshInfo extractSeshInfo(State sesh) {

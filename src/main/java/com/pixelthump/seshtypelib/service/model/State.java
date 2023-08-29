@@ -30,6 +30,8 @@ public class State implements Serializable {
     private boolean hostJoined;
     @Column(name = "has_changed", nullable = false)
     private Boolean hasChanged = false;
+    @Column(name = "sesh_type")
+    private String seshType;
 
     @Override
     public boolean equals(Object o) {
