@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-@EnableAutoConfiguration
 @ConfigurationProperties(prefix = "pixelthump.seshtype")
 public class SpringBootSeshtypelibAutoConfiguration {
 
