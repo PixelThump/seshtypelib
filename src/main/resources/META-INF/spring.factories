@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.pixelthump.seshtypelib.config.SpringBootSeshtypelibAutoConfiguration,\
+com.pixelthump.seshtypelib.config.CorsConfig
